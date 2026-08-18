@@ -1,0 +1,17 @@
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\bin\Debug\net9.0\BreakdownManager.Data.deps.json
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\bin\Debug\net9.0\BreakdownManager.Data.runtimeconfig.json
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\bin\Debug\net9.0\BreakdownManager.Data.dll
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\bin\Debug\net9.0\BreakdownManager.Data.pdb
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\bin\Debug\net9.0\BreakdownManager.Domain.dll
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\bin\Debug\net9.0\BreakdownManager.Domain.pdb
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.csproj.AssemblyReference.cache
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.AssemblyInfoInputs.cache
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.AssemblyInfo.cs
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.csproj.CoreCompileInputs.cache
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\Breakdow.0ECD1F76.Up2Date
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.dll
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\refint\BreakdownManager.Data.dll
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.pdb
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\BreakdownManager.Data.genruntimeconfig.cache
+C:\Users\nkuthalo.makonco\Documents\Visual Studio\2026\BreakdownManager\src\BreakdownManager.Data\obj\Debug\net9.0\ref\BreakdownManager.Data.dll

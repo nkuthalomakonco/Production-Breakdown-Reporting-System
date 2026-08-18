@@ -1,0 +1,45 @@
+<Window x:Class="BreakdownManager.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:BreakdownManager.App.ViewModels"
+        xmlns:views="clr-namespace:BreakdownManager.App.Views"
+        Title="Breakdown Manager" Height="720" Width="1100"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:ReportBreakdownViewModel}">
+            <views:ReportBreakdownView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TechnicianDashboardViewModel}">
+            <views:TechnicianDashboardView/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top nav bar -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="20,14">
+            <DockPanel>
+                <TextBlock Text="Breakdown Manager" Foreground="White" FontSize="18" FontWeight="Bold"
+                           VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <RadioButton Content="Supervisor" GroupName="Nav" Foreground="White" Margin="0,0,20,0"
+                                 IsChecked="{Binding ActiveTab, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Supervisor, Mode=OneWay}"
+                                 Command="{Binding ShowSupervisorViewCommand}" Style="{StaticResource NavRadioButton}"/>
+                    <RadioButton Content="Technician" GroupName="Nav" Foreground="White"
+                                 IsChecked="{Binding ActiveTab, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Technician, Mode=OneWay}"
+                                 Command="{Binding ShowTechnicianViewCommand}" Style="{StaticResource NavRadioButton}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Active screen -->
+        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}">
+            <ContentControl Content="{Binding CurrentView}"/>
+        </Border>
+    </Grid>
+</Window>

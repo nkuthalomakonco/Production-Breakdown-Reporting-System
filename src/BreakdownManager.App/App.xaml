@@ -1,0 +1,45 @@
+<Application x:Class="BreakdownManager.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:BreakdownManager.App.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+            <converters:StringEqualsConverter x:Key="StringEqualsConverter"/>
+            <SolidColorBrush x:Key="PrimaryBrush" Color="#1E3A5F"/>
+            <SolidColorBrush x:Key="AccentBrush" Color="#E67E22"/>
+            <SolidColorBrush x:Key="CriticalBrush" Color="#C0392B"/>
+            <SolidColorBrush x:Key="HighBrush" Color="#E67E22"/>
+            <SolidColorBrush x:Key="MediumBrush" Color="#F1C40F"/>
+            <SolidColorBrush x:Key="LowBrush" Color="#7F8C8D"/>
+            <SolidColorBrush x:Key="SurfaceBrush" Color="#F5F6F8"/>
+
+            <Style TargetType="Button">
+                <Setter Property="Padding" Value="14,8"/>
+                <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Cursor" Value="Hand"/>
+            </Style>
+
+            <Style TargetType="RadioButton" x:Key="NavRadioButton">
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="TextBlock" x:Key="SectionHeader">
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                <Setter Property="Margin" Value="0,0,0,12"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

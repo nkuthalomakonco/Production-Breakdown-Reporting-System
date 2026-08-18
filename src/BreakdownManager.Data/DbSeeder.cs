@@ -1,0 +1,35 @@
+using BreakdownManager.Domain.Entities;
+using BreakdownManager.Domain.Enums;
+
+namespace BreakdownManager.Data;
+
+/// <summary>Seeds a handful of demo machines and users so the app isn't empty on first run.</summary>
+public static class DbSeeder
+{
+    public static void Seed(BreakdownManagerDbContext context)
+    {
+        context.Database.EnsureCreated();
+
+        if (!context.Users.Any())
+        {
+            context.Users.AddRange(
+                new User { FullName = "Sarah Nkosi", Username = "sarah.n", Role = UserRole.Supervisor, PasswordHash = "changeme" },
+                new User { FullName = "John Mokoena", Username = "john.m", Role = UserRole.Technician, PasswordHash = "changeme" },
+                new User { FullName = "Priya Naidoo", Username = "priya.n", Role = UserRole.Technician, PasswordHash = "changeme" },
+                new User { FullName = "David Botha", Username = "david.b", Role = UserRole.MaintenanceManager, PasswordHash = "changeme" }
+            );
+        }
+
+        if (!context.Machines.Any())
+        {
+            context.Machines.AddRange(
+                new Machine { Code = "BAT-101", Name = "Lead Pasting Machine", Area = "Pasting", Line = "Line 1", Manufacturer = "Sovema", Plc = "Siemens S7-1500", Robot = "KUKA KR6", Criticality = Criticality.High },
+                new Machine { Code = "BAT-102", Name = "Formation Line 3", Area = "Formation", Line = "Line 3", Manufacturer = "Digatron", Plc = "Allen-Bradley CompactLogix", Criticality = Criticality.High },
+                new Machine { Code = "BAT-201", Name = "Conveyor - Line 3", Area = "Assembly", Line = "Line 3", Manufacturer = "In-house", Plc = "Siemens S7-1200", Criticality = Criticality.Medium },
+                new Machine { Code = "BAT-305", Name = "Hydraulic Press", Area = "Casting", Line = "Line 2", Manufacturer = "Wirtz", Plc = "Schneider M340", Criticality = Criticality.Medium }
+            );
+        }
+
+        context.SaveChanges();
+    }
+}
