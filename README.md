@@ -9,11 +9,6 @@ This repo is the **v1 WPF desktop skeleton**: a working, compilable MVP scaffold
 domain model, database, business logic, and the two primary screens (Supervisor report screen,
 Technician dashboard) already wired together end-to-end.
 
-> **Note on where this was built:** this scaffold was generated in a Linux sandbox, so the code
-> has not been compiled or run yet — WPF only builds/runs on Windows. Everything is written to
-> compile cleanly in Visual Studio 2022 on Windows, but budget time for the first build to shake
-> out any small issues (a missing `using`, a NuGet version bump, etc.) before you rely on it.
->
 > A code review since the initial scaffold caught and fixed one issue that would have crashed the
 > app on first launch: the seeded demo users had duplicate `Username` values, which violated the
 > unique index on `Users.Username` and threw during `DbSeeder.Seed()`. That's fixed. The repo also
