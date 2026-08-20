@@ -13,6 +13,12 @@ Technician dashboard) already wired together end-to-end.
 > has not been compiled or run yet — WPF only builds/runs on Windows. Everything is written to
 > compile cleanly in Visual Studio 2022 on Windows, but budget time for the first build to shake
 > out any small issues (a missing `using`, a NuGet version bump, etc.) before you rely on it.
+>
+> A code review since the initial scaffold caught and fixed one issue that would have crashed the
+> app on first launch: the seeded demo users had duplicate `Username` values, which violated the
+> unique index on `Users.Username` and threw during `DbSeeder.Seed()`. That's fixed. The repo also
+> now has a proper `.gitignore` so `bin/`, `obj/`, and the `.vs/` folder stay out of source
+> control going forward.
 
 ## Getting started (Windows)
 
@@ -25,8 +31,8 @@ Technician dashboard) already wired together end-to-end.
 4. Set `BreakdownManager.App` as the startup project (it already is, by convention — the only
    executable project) and press **F5**.
 5. On first run the app creates `BreakdownManager.db` (a SQLite file) next to the executable and
-   seeds it with a few demo machines and users (2 supervisors... actually 1 supervisor, 2
-   technicians, 1 maintenance manager) so the screens aren't empty.
+   seeds it with a few demo machines and users (2 supervisors, 2 technicians, 1 maintenance
+   manager) so the screens aren't empty.
 
 No separate database server, no Docker, nothing else to install — that's the point of SQLite here.
 
