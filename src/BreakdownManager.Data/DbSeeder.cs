@@ -15,9 +15,9 @@ public static class DbSeeder
             context.Users.AddRange(
                 new User { FullName = "Jabu Nkosi", Username = "jabu.n", Role = UserRole.Supervisor, PasswordHash = "jabu" },
                 new User { FullName = "John Mokoena", Username = "john.m", Role = UserRole.Technician, PasswordHash = "john" },
-				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.m", Role = UserRole.Technician, PasswordHash = "10" },
-                new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.m", Role = UserRole.Supervisor, PasswordHash = "100" },
-                new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.m", Role = UserRole.MaintenanceManager, PasswordHash = "1000" }
+				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.tech", Role = UserRole.Technician, PasswordHash = "nkuthalo" },
+				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.sup", Role = UserRole.Supervisor, PasswordHash = "nkuthalo" },
+				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.mgr", Role = UserRole.MaintenanceManager, PasswordHash = "nkuthalo" }
             );
         }
 
