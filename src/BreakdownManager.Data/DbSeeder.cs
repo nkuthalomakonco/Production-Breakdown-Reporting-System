@@ -1,5 +1,6 @@
 using BreakdownManager.Domain.Entities;
 using BreakdownManager.Domain.Enums;
+using BreakdownManager.Domain.Security;
 
 namespace BreakdownManager.Data;
 
@@ -12,12 +13,15 @@ public static class DbSeeder
 
         if (!context.Users.Any())
         {
+            // The plaintext value below each demo user is their login password — it's only
+            // readable here because this is seed data; PasswordHasher.Hash() is what actually
+            // gets stored in the database, exactly as a real signup would.
             context.Users.AddRange(
-                new User { FullName = "Jabu Nkosi", Username = "jabu.n", Role = UserRole.Supervisor, PasswordHash = "jabu" },
-                new User { FullName = "John Mokoena", Username = "john.m", Role = UserRole.Technician, PasswordHash = "john" },
-				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.tech", Role = UserRole.Technician, PasswordHash = "nkuthalo" },
-				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.sup", Role = UserRole.Supervisor, PasswordHash = "nkuthalo" },
-				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.mgr", Role = UserRole.MaintenanceManager, PasswordHash = "nkuthalo" }
+                new User { FullName = "Jabu Nkosi", Username = "jabu.n", Role = UserRole.Supervisor, PasswordHash = PasswordHasher.Hash("jabu") },
+                new User { FullName = "John Mokoena", Username = "john.m", Role = UserRole.Technician, PasswordHash = PasswordHasher.Hash("john") },
+				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.tech", Role = UserRole.Technician, PasswordHash = PasswordHasher.Hash("nkuthalo") },
+				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.sup", Role = UserRole.Supervisor, PasswordHash = PasswordHasher.Hash("nkuthalo") },
+				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.mgr", Role = UserRole.MaintenanceManager, PasswordHash = PasswordHasher.Hash("nkuthalo") }
             );
         }
 

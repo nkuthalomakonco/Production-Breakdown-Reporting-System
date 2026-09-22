@@ -14,18 +14,17 @@ public partial class ReportBreakdownViewModel : ObservableObject
 {
     private readonly IBreakdownService _breakdownService;
     private readonly IMachineService _machineService;
-    private readonly IUserService _userService;
+    private readonly ICurrentUserContext _currentUserContext;
 
     public ObservableCollection<Machine> Machines { get; } = new();
-    public ObservableCollection<User> Reporters { get; } = new();
     public List<FaultCategory> Categories { get; } = Enum.GetValues<FaultCategory>().ToList();
     public List<Priority> Priorities { get; } = Enum.GetValues<Priority>().ToList();
 
-    [ObservableProperty]
-    private Machine? selectedMachine;
+    /// <summary>Who's reporting — the logged-in user, no longer a dropdown pick.</summary>
+    public User? Reporter => _currentUserContext.CurrentUser;
 
     [ObservableProperty]
-    private User? selectedReporter;
+    private Machine? selectedMachine;
 
     [ObservableProperty]
     private FaultCategory selectedCategory = FaultCategory.Mechanical;
@@ -45,11 +44,11 @@ public partial class ReportBreakdownViewModel : ObservableObject
     [ObservableProperty]
     private string? lastTicketNumber;
 
-    public ReportBreakdownViewModel(IBreakdownService breakdownService, IMachineService machineService, IUserService userService)
+    public ReportBreakdownViewModel(IBreakdownService breakdownService, IMachineService machineService, ICurrentUserContext currentUserContext)
     {
         _breakdownService = breakdownService;
         _machineService = machineService;
-        _userService = userService;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task InitializeAsync()
@@ -60,15 +59,9 @@ public partial class ReportBreakdownViewModel : ObservableObject
                 Machines.Add(machine);
         }
 
-        if (Reporters.Count == 0)
-        {
-            foreach (var user in await _userService.GetByRoleAsync(UserRole.Supervisor))
-                Reporters.Add(user);
-
-            SelectedReporter ??= Reporters.FirstOrDefault();
-        }
-
         SelectedMachine ??= Machines.FirstOrDefault();
+        OnPropertyChanged(nameof(Reporter));
+        ReportBreakdownCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand]
@@ -87,18 +80,18 @@ public partial class ReportBreakdownViewModel : ObservableObject
     }
 
     private bool CanReportBreakdown() =>
-        SelectedMachine is not null && SelectedReporter is not null && !string.IsNullOrWhiteSpace(Description);
+        SelectedMachine is not null && Reporter is not null && !string.IsNullOrWhiteSpace(Description);
 
     [RelayCommand(CanExecute = nameof(CanReportBreakdown))]
     private async Task ReportBreakdownAsync()
     {
-        if (SelectedMachine is null || SelectedReporter is null)
+        if (SelectedMachine is null || Reporter is null)
             return;
 
         var request = new NewBreakdownRequest
         {
             MachineId = SelectedMachine.Id,
-            ReportedByUserId = SelectedReporter.Id,
+            ReportedByUserId = Reporter.Id,
             Category = SelectedCategory,
             Priority = SelectedPriority,
             Description = Description,
@@ -118,6 +111,5 @@ public partial class ReportBreakdownViewModel : ObservableObject
     }
 
     partial void OnSelectedMachineChanged(Machine? value) => ReportBreakdownCommand.NotifyCanExecuteChanged();
-    partial void OnSelectedReporterChanged(User? value) => ReportBreakdownCommand.NotifyCanExecuteChanged();
     partial void OnDescriptionChanged(string value) => ReportBreakdownCommand.NotifyCanExecuteChanged();
 }

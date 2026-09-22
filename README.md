@@ -14,6 +14,13 @@ Technician dashboard) already wired together end-to-end.
 > unique index on `Users.Username` and threw during `DbSeeder.Seed()`. That's fixed. The repo also
 > now has a proper `.gitignore` so `bin/`, `obj/`, and the `.vs/` folder stay out of source
 > control going forward.
+>
+> **Login/auth is now implemented.** The app opens on a real sign-in screen instead of the old
+> "who's using the app" dropdown pickers on the Supervisor and Technician screens — those are
+> gone, and each screen now reads the logged-in user from `ICurrentUserContext` instead. Passwords
+> are hashed with PBKDF2-SHA256 (`PasswordHasher`, BCL-only, no new package) rather than stored as
+> plaintext. The Supervisor/Technician tabs in the top nav are now shown or hidden based on the
+> logged-in user's role, and there's a Log out button.
 
 ## Getting started (Windows)
 
@@ -28,6 +35,18 @@ Technician dashboard) already wired together end-to-end.
 5. On first run the app creates `BreakdownManager.db` (a SQLite file) next to the executable and
    seeds it with a few demo machines and users (2 supervisors, 2 technicians, 1 maintenance
    manager) so the screens aren't empty.
+6. Sign in with one of the demo accounts (username / password):
+
+   | Username         | Password    | Role                |
+   | ---------------- | ----------- | ------------------- |
+   | `jabu.n`         | `jabu`      | Supervisor          |
+   | `nkuthalo.sup`   | `nkuthalo`  | Supervisor          |
+   | `john.m`         | `john`      | Technician          |
+   | `nkuthalo.tech`  | `nkuthalo`  | Technician          |
+   | `nkuthalo.mgr`   | `nkuthalo`  | Maintenance Manager |
+
+   These are seed data only — real passwords are never stored, `PasswordHasher` hashes them
+   before they hit the database (see below).
 
 No separate database server, no Docker, nothing else to install — that's the point of SQLite here.
 
@@ -65,6 +84,11 @@ or `Data` knows the app is a desktop app — that matters later if you build the
 
 - **Domain model**: `Machine`, `User` (Supervisor/Technician/Manager roles), `Breakdown` (full
   ticket lifecycle with timestamps per stage), `SparePart`, `Attachment`.
+- **Login / auth**: a real sign-in screen (`LoginViewModel`/`LoginView`), passwords hashed with
+  PBKDF2-SHA256 (`PasswordHasher`), `IUserService.AuthenticateAsync` rejecting unknown usernames,
+  wrong passwords, and deactivated accounts identically, and `ICurrentUserContext` holding the
+  signed-in user for the session. The nav bar's Supervisor/Technician tabs are shown or hidden
+  based on the logged-in user's role, with a Log out button that returns to the sign-in screen.
 - **Ticket workflow**: New → Assigned → Travelling → Diagnosing → Waiting for Parts → Repairing
   → Testing → Completed → Closed, exactly as scoped — not a generic Open/Closed helpdesk model.
 - **Supervisor screen**: pick machine, category, priority, description, optional photo, submit —
@@ -75,25 +99,23 @@ or `Data` knows the app is a desktop app — that matters later if you build the
   completed), and downtime — plus a `DashboardStats` aggregate (open/in-progress/waiting-parts
   counts, average MTTR, top problem machines) ready to bind to a dashboard view.
 - **Ticket numbering**: `BD-2026-0001` style, auto-incrementing per year.
-- **Tests**: ticket creation, technician assignment, and repair completion, run against a real
-  (in-memory) SQLite connection so the actual SQL translation is exercised, not just an in-memory
-  fake.
+- **Tests**: ticket creation, technician assignment, repair completion, password hashing, and
+  login (correct password, wrong password, unknown username, deactivated account), all run
+  against a real (in-memory) SQLite connection where relevant so the actual SQL translation is
+  exercised, not just an in-memory fake.
 
 ## What's deliberately not in v1 yet
 
 These are straightforward to layer on top of the current structure, in roughly this order:
 
-1. **Login / auth** — right now "who's using the app" is a dropdown picker standing in for a
-   real login, exactly so a proper login screen can slot in later without touching the
-   ViewModels.
-2. **Manager dashboard & charts** (LiveCharts2) — `IBreakdownService.GetDashboardStatsAsync()`
+1. **Manager dashboard & charts** (LiveCharts2) — `IBreakdownService.GetDashboardStatsAsync()`
    already returns everything a dashboard needs; it just doesn't have a screen yet.
-3. **PDF/Excel reports** (QuestPDF / ClosedXML).
-4. **Notifications** (Windows toast when a job is accepted / when a machine's been down >30 min).
-5. **Root cause tooling** (5 Whys / Fishbone) beyond the current free-text `RootCause` field.
-6. **Spare parts consumption UI** — the `BreakdownSparePart` join entity and stock tracking on
+2. **PDF/Excel reports** (QuestPDF / ClosedXML).
+3. **Notifications** (Windows toast when a job is accepted / when a machine's been down >30 min).
+4. **Root cause tooling** (5 Whys / Fishbone) beyond the current free-text `RootCause` field.
+5. **Spare parts consumption UI** — the `BreakdownSparePart` join entity and stock tracking on
    `SparePart` already exist in the data model; there's no screen for it yet.
-7. Longer term: QR codes per machine, PLC alarm integration, and the ASP.NET Core API + Blazor
+6. Longer term: QR codes per machine, PLC alarm integration, and the ASP.NET Core API + Blazor
    PWA path discussed for v2/v3 so supervisors and technicians can use it from tablets/phones.
 
 ## License

@@ -40,9 +40,14 @@ public partial class App : Application
         services.AddScoped<IMachineService, MachineService>();
         services.AddScoped<IUserService, UserService>();
 
-        services.AddTransient<MainViewModel>();
-        services.AddTransient<ReportBreakdownViewModel>();
-        services.AddTransient<TechnicianDashboardViewModel>();
+        // One instance for the whole app lifetime: every view model needs to see the same
+        // signed-in user, and it has to survive across the scoped DbContext being recreated.
+        services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
+
+        services.AddSingleton<LoginViewModel>();
+        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<ReportBreakdownViewModel>();
+        services.AddSingleton<TechnicianDashboardViewModel>();
 
         services.AddTransient<MainWindow>();
     }

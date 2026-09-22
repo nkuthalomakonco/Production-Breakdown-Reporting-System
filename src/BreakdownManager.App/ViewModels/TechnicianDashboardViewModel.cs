@@ -11,9 +11,8 @@ namespace BreakdownManager.App.ViewModels;
 public partial class TechnicianDashboardViewModel : ObservableObject
 {
     private readonly IBreakdownService _breakdownService;
-    private readonly IUserService _userService;
+    private readonly ICurrentUserContext _currentUserContext;
 
-    public ObservableCollection<User> Technicians { get; } = new();
     public ObservableCollection<Breakdown> UnassignedJobs { get; } = new();
     public ObservableCollection<Breakdown> MyJobs { get; } = new();
 
@@ -28,28 +27,21 @@ public partial class TechnicianDashboardViewModel : ObservableObject
         BreakdownStatus.Completed
     };
 
-    [ObservableProperty]
-    private User? currentTechnician;
+    /// <summary>Who's working — the logged-in user, no longer a dropdown pick.</summary>
+    public User? CurrentTechnician => _currentUserContext.CurrentUser;
 
     [ObservableProperty]
     private string? statusMessage;
 
-    public TechnicianDashboardViewModel(IBreakdownService breakdownService, IUserService userService)
+    public TechnicianDashboardViewModel(IBreakdownService breakdownService, ICurrentUserContext currentUserContext)
     {
         _breakdownService = breakdownService;
-        _userService = userService;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task InitializeAsync()
     {
-        if (Technicians.Count == 0)
-        {
-            foreach (var tech in await _userService.GetByRoleAsync(UserRole.Technician))
-                Technicians.Add(tech);
-
-            CurrentTechnician ??= Technicians.FirstOrDefault();
-        }
-
+        OnPropertyChanged(nameof(CurrentTechnician));
         await RefreshAsync();
     }
 
@@ -72,7 +64,7 @@ public partial class TechnicianDashboardViewModel : ObservableObject
     {
         if (CurrentTechnician is null)
         {
-            StatusMessage = "Select which technician you're working as first.";
+            StatusMessage = "You need to be logged in to accept a job.";
             return;
         }
 
@@ -96,6 +88,4 @@ public partial class TechnicianDashboardViewModel : ObservableObject
 
     [RelayCommand]
     private async Task RefreshCommandAsync() => await RefreshAsync();
-
-    partial void OnCurrentTechnicianChanged(User? value) => _ = RefreshAsync();
 }

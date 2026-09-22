@@ -16,9 +16,10 @@
         <TextBlock Grid.Row="0" Text="Technician Dashboard" Style="{StaticResource SectionHeader}"/>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="Working as:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,10,0"/>
-            <ComboBox ItemsSource="{Binding Technicians}" SelectedItem="{Binding CurrentTechnician}"
-                      DisplayMemberPath="FullName" Padding="8" MinWidth="180"/>
+            <TextBlock VerticalAlignment="Center">
+                <Run Text="Working as:" Foreground="Gray"/>
+                <Run Text="{Binding CurrentTechnician.FullName, Mode=OneWay}" FontWeight="SemiBold"/>
+            </TextBlock>
             <Button Content="Refresh" Command="{Binding RefreshCommandCommand}" Margin="16,0,0,0"/>
             <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" Margin="16,0,0,0"
                        Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold"/>

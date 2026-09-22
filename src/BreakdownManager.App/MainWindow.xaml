@@ -7,6 +7,9 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <views:LoginView/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ReportBreakdownViewModel}">
             <views:ReportBreakdownView/>
         </DataTemplate>
@@ -26,11 +29,23 @@
             <DockPanel>
                 <TextBlock Text="Breakdown Manager" Foreground="White" FontSize="18" FontWeight="Bold"
                            VerticalAlignment="Center" DockPanel.Dock="Left"/>
+
+                <!-- Logged-in user + logout, only shown once signed in -->
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right"
+                            Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding LoggedInUserDisplay}" Foreground="White" VerticalAlignment="Center"
+                               Margin="0,0,16,0" Opacity="0.85"/>
+                    <Button Content="Log out" Command="{Binding LogoutCommand}"
+                            Background="Transparent" Foreground="White" Padding="10,6"/>
+                </StackPanel>
+
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <RadioButton Content="Supervisor" GroupName="Nav" Foreground="White" Margin="0,0,20,0"
+                                 Visibility="{Binding CanShowSupervisorTab, Converter={StaticResource BoolToVisibilityConverter}}"
                                  IsChecked="{Binding ActiveTab, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Supervisor, Mode=OneWay}"
                                  Command="{Binding ShowSupervisorViewCommand}" Style="{StaticResource NavRadioButton}"/>
                     <RadioButton Content="Technician" GroupName="Nav" Foreground="White"
+                                 Visibility="{Binding CanShowTechnicianTab, Converter={StaticResource BoolToVisibilityConverter}}"
                                  IsChecked="{Binding ActiveTab, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Technician, Mode=OneWay}"
                                  Command="{Binding ShowTechnicianViewCommand}" Style="{StaticResource NavRadioButton}"/>
                 </StackPanel>

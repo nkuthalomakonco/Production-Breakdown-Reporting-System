@@ -10,11 +10,10 @@
 
             <TextBlock Text="Report Breakdown" Style="{StaticResource SectionHeader}"/>
 
-            <TextBlock Text="Reporting as" FontWeight="SemiBold" Margin="0,0,0,4"/>
-            <ComboBox ItemsSource="{Binding Reporters}"
-                      SelectedItem="{Binding SelectedReporter}"
-                      DisplayMemberPath="FullName"
-                      Padding="8" Margin="0,0,0,16"/>
+            <TextBlock Margin="0,0,0,16">
+                <Run Text="Reporting as" Foreground="Gray"/>
+                <Run Text="{Binding Reporter.FullName, Mode=OneWay}" FontWeight="SemiBold"/>
+            </TextBlock>
 
             <TextBlock Text="Machine" FontWeight="SemiBold" Margin="0,0,0,4"/>
             <ComboBox ItemsSource="{Binding Machines}"

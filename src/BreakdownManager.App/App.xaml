@@ -6,6 +6,8 @@
         <ResourceDictionary>
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <converters:StringEqualsConverter x:Key="StringEqualsConverter"/>
+            <converters:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <SolidColorBrush x:Key="PrimaryBrush" Color="#1E3A5F"/>
             <SolidColorBrush x:Key="AccentBrush" Color="#E67E22"/>
             <SolidColorBrush x:Key="CriticalBrush" Color="#C0392B"/>
