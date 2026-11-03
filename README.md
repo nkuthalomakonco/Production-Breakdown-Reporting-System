@@ -21,6 +21,15 @@ Technician dashboard) already wired together end-to-end.
 > are hashed with PBKDF2-SHA256 (`PasswordHasher`, BCL-only, no new package) rather than stored as
 > plaintext. The Supervisor/Technician tabs in the top nav are now shown or hidden based on the
 > logged-in user's role, and there's a Log out button.
+>
+> **Manager dashboard & charts are now implemented.** `DashboardStats` was extended with a
+> category breakdown, a per-stage breakdown, and a 14-day daily trend, all computed inside the
+> same `GetDashboardStatsAsync()` call rather than adding new queries. A new Manager tab (visible
+> to Maintenance Managers and Admins, who now land there by default on login) shows the KPI
+> numbers as tiles plus four [LiveCharts2](https://livecharts.dev/) charts: top problem machines,
+> category split, open tickets by stage, and daily volume. This does add one new NuGet package —
+> `LiveChartsCore.SkiaSharpView.WPF` — restored the same way as the existing EF Core/MVVM
+> packages.
 
 ## Getting started (Windows)
 
@@ -34,7 +43,8 @@ Technician dashboard) already wired together end-to-end.
    executable project) and press **F5**.
 5. On first run the app creates `BreakdownManager.db` (a SQLite file) next to the executable and
    seeds it with a few demo machines and users (2 supervisors, 2 technicians, 1 maintenance
-   manager) so the screens aren't empty.
+   manager), plus ~two weeks of sample breakdown tickets so the manager dashboard's charts have
+   data to show.
 6. Sign in with one of the demo accounts (username / password):
 
    | Username         | Password    | Role                |
@@ -97,10 +107,15 @@ or `Data` knows the app is a desktop app — that matters later if you build the
   stages with a single button per stage.
 - **Auto-computed KPIs** on every ticket: response time (report → assigned), MTTR (report →
   completed), and downtime — plus a `DashboardStats` aggregate (open/in-progress/waiting-parts
-  counts, average MTTR, top problem machines) ready to bind to a dashboard view.
+  counts, average response time and MTTR, top problem machines, category and per-stage
+  breakdowns, and a 14-day daily trend).
+- **Manager dashboard**: KPI tiles plus four LiveCharts2 charts (top problem machines, breakdowns
+  by category, open tickets by stage, daily volume), with a Refresh button. Visible to
+  Maintenance Managers and Admins only.
 - **Ticket numbering**: `BD-2026-0001` style, auto-incrementing per year.
-- **Tests**: ticket creation, technician assignment, repair completion, password hashing, and
-  login (correct password, wrong password, unknown username, deactivated account), all run
+- **Tests**: ticket creation, technician assignment, repair completion, dashboard chart data
+  (category/status/daily-trend breakdowns), password hashing, and login (correct password, wrong
+  password, unknown username, deactivated account), all run
   against a real (in-memory) SQLite connection where relevant so the actual SQL translation is
   exercised, not just an in-memory fake.
 
@@ -108,14 +123,13 @@ or `Data` knows the app is a desktop app — that matters later if you build the
 
 These are straightforward to layer on top of the current structure, in roughly this order:
 
-1. **Manager dashboard & charts** (LiveCharts2) — `IBreakdownService.GetDashboardStatsAsync()`
-   already returns everything a dashboard needs; it just doesn't have a screen yet.
-2. **PDF/Excel reports** (QuestPDF / ClosedXML).
-3. **Notifications** (Windows toast when a job is accepted / when a machine's been down >30 min).
-4. **Root cause tooling** (5 Whys / Fishbone) beyond the current free-text `RootCause` field.
-5. **Spare parts consumption UI** — the `BreakdownSparePart` join entity and stock tracking on
+1. **PDF/Excel reports** (QuestPDF / ClosedXML) — the dashboard's `DashboardStats` is the natural
+   data source.
+2. **Notifications** (Windows toast when a job is accepted / when a machine's been down >30 min).
+3. **Root cause tooling** (5 Whys / Fishbone) beyond the current free-text `RootCause` field.
+4. **Spare parts consumption UI** — the `BreakdownSparePart` join entity and stock tracking on
    `SparePart` already exist in the data model; there's no screen for it yet.
-6. Longer term: QR codes per machine, PLC alarm integration, and the ASP.NET Core API + Blazor
+5. Longer term: QR codes per machine, PLC alarm integration, and the ASP.NET Core API + Blazor
    PWA path discussed for v2/v3 so supervisors and technicians can use it from tablets/phones.
 
 ## License

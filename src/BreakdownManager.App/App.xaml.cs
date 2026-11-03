@@ -48,6 +48,7 @@ public partial class App : Application
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<ReportBreakdownViewModel>();
         services.AddSingleton<TechnicianDashboardViewModel>();
+        services.AddSingleton<ManagerDashboardViewModel>();
 
         services.AddTransient<MainWindow>();
     }

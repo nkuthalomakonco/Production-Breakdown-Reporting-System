@@ -104,6 +104,93 @@ public class BreakdownServiceTests : IDisposable
         Assert.NotNull(updated.Mttr);
     }
 
+    [Fact]
+    public async Task GetDashboardStatsAsync_BreaksDownByCategory_IncludingZeroCountCategories()
+    {
+        await _sut.ReportBreakdownAsync(new NewBreakdownRequest
+        {
+            MachineId = 1,
+            ReportedByUserId = 1,
+            Category = FaultCategory.Mechanical,
+            Priority = Priority.High,
+            Description = "Conveyor jam"
+        });
+        await _sut.ReportBreakdownAsync(new NewBreakdownRequest
+        {
+            MachineId = 1,
+            ReportedByUserId = 1,
+            Category = FaultCategory.Mechanical,
+            Priority = Priority.Medium,
+            Description = "Belt slipping"
+        });
+        await _sut.ReportBreakdownAsync(new NewBreakdownRequest
+        {
+            MachineId = 1,
+            ReportedByUserId = 1,
+            Category = FaultCategory.Electrical,
+            Priority = Priority.Low,
+            Description = "Flickering panel light"
+        });
+
+        var stats = await _sut.GetDashboardStatsAsync();
+
+        // Every category is present (so a chart's slice order is stable), even ones with zero reports.
+        Assert.Equal(Enum.GetValues<FaultCategory>().Length, stats.BreakdownsByCategory.Count);
+        Assert.Equal(2, stats.BreakdownsByCategory.Single(c => c.Category == FaultCategory.Mechanical).Count);
+        Assert.Equal(1, stats.BreakdownsByCategory.Single(c => c.Category == FaultCategory.Electrical).Count);
+        Assert.Equal(0, stats.BreakdownsByCategory.Single(c => c.Category == FaultCategory.Robot).Count);
+    }
+
+    [Fact]
+    public async Task GetDashboardStatsAsync_BreaksDownByStatus_ExcludingClosedTickets()
+    {
+        var open = await _sut.ReportBreakdownAsync(new NewBreakdownRequest
+        {
+            MachineId = 1,
+            ReportedByUserId = 1,
+            Category = FaultCategory.Software,
+            Priority = Priority.Low,
+            Description = "HMI showing wrong recipe"
+        });
+
+        var closed = await _sut.ReportBreakdownAsync(new NewBreakdownRequest
+        {
+            MachineId = 1,
+            ReportedByUserId = 1,
+            Category = FaultCategory.Software,
+            Priority = Priority.Low,
+            Description = "Already resolved ticket"
+        });
+        await _sut.AssignTechnicianAsync(closed.Id, 2);
+        await _sut.CompleteRepairAsync(closed.Id, "n/a", "n/a");
+        await _sut.CloseBreakdownAsync(closed.Id);
+
+        var stats = await _sut.GetDashboardStatsAsync();
+
+        Assert.DoesNotContain(stats.BreakdownsByStatus, s => s.Status == BreakdownStatus.Closed);
+        Assert.Equal(1, stats.BreakdownsByStatus.Single(s => s.Status == BreakdownStatus.New).Count);
+    }
+
+    [Fact]
+    public async Task GetDashboardStatsAsync_DailyTrend_CoversTrailingFourteenDaysEndingToday()
+    {
+        await _sut.ReportBreakdownAsync(new NewBreakdownRequest
+        {
+            MachineId = 1,
+            ReportedByUserId = 1,
+            Category = FaultCategory.Hydraulic,
+            Priority = Priority.Medium,
+            Description = "Hydraulic pressure drop"
+        });
+
+        var stats = await _sut.GetDashboardStatsAsync();
+
+        Assert.Equal(14, stats.DailyTrend.Count);
+        Assert.Equal(DateTime.Today, stats.DailyTrend[^1].Date);
+        Assert.Equal(DateTime.Today.AddDays(-13), stats.DailyTrend[0].Date);
+        Assert.Equal(1, stats.DailyTrend[^1].Count); // reported "now", so it lands on today
+    }
+
     public void Dispose()
     {
         _db.Dispose();

@@ -136,6 +136,9 @@ public class BreakdownService : IBreakdownService
         await _db.SaveChangesAsync();
     }
 
+    /// <summary>How many trailing days the dashboard's daily-volume trend chart covers.</summary>
+    private const int TrendWindowDays = 14;
+
     public async Task<DashboardStats> GetDashboardStatsAsync()
     {
         var today = DateTime.Today;
@@ -155,6 +158,23 @@ public class BreakdownService : IBreakdownService
             .Take(10)
             .ToList();
 
+        // All fault categories are included even at zero, so the chart's slice/axis order never
+        // shifts around as data comes in — an empty category just doesn't take up any room.
+        var byCategory = Enum.GetValues<FaultCategory>()
+            .Select(category => (Category: category, Count: all.Count(b => b.Category == category)))
+            .ToList();
+
+        var byStatus = Enum.GetValues<BreakdownStatus>()
+            .Where(status => status != BreakdownStatus.Closed)
+            .Select(status => (Status: status, Count: open.Count(b => b.Status == status)))
+            .ToList();
+
+        var windowStart = today.AddDays(-(TrendWindowDays - 1));
+        var dailyTrend = Enumerable.Range(0, TrendWindowDays)
+            .Select(offset => windowStart.AddDays(offset))
+            .Select(date => (Date: date, Count: all.Count(b => b.ReportedAt.Date == date)))
+            .ToList();
+
         return new DashboardStats
         {
             OpenBreakdowns = open.Count,
@@ -171,7 +191,10 @@ public class BreakdownService : IBreakdownService
             DowntimeToday = reportedToday.Count > 0
                 ? TimeSpan.FromTicks(reportedToday.Sum(b => (b.Downtime ?? TimeSpan.Zero).Ticks))
                 : TimeSpan.Zero,
-            TopProblemMachines = topMachines
+            TopProblemMachines = topMachines,
+            BreakdownsByCategory = byCategory,
+            BreakdownsByStatus = byStatus,
+            DailyTrend = dailyTrend
         };
     }
 

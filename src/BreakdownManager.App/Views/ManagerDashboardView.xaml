@@ -1,0 +1,141 @@
+<UserControl x:Class="BreakdownManager.App.Views.ManagerDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d"
+             d:DesignWidth="1100" d:DesignHeight="720">
+
+    <UserControl.Resources>
+        <Style x:Key="KpiCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E3E5E8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="Margin" Value="0,0,12,12"/>
+        </Style>
+        <Style x:Key="KpiValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+        </Style>
+        <Style x:Key="KpiLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+        <Style x:Key="ChartCard" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E3E5E8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
+        </Style>
+        <Style x:Key="ChartTitle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+            <DockPanel Margin="0,0,0,16">
+                <TextBlock Text="Manager Dashboard" Style="{StaticResource SectionHeader}" DockPanel.Dock="Left"/>
+                <Button Content="Refresh" Command="{Binding RefreshCommand}" HorizontalAlignment="Right"/>
+            </DockPanel>
+
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource CriticalBrush}"
+                       Margin="0,0,0,12" TextWrapping="Wrap"
+                       Visibility="{Binding StatusMessage, Converter={StaticResource NullOrEmptyToVisibilityConverter}}"/>
+
+            <!-- KPI tiles -->
+            <WrapPanel Orientation="Horizontal">
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding OpenBreakdowns}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="Open Breakdowns" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding InProgress}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="In Progress" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding WaitingForParts}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="Waiting for Parts" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding CompletedToday}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="Completed Today" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding MachinesDown}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="Machines Down" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding AverageResponseTimeDisplay}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="Avg. Response Time" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding AverageMttrDisplay}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="Avg. MTTR" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource KpiCard}" MinWidth="140">
+                    <StackPanel>
+                        <TextBlock Text="{Binding DowntimeTodayDisplay}" Style="{StaticResource KpiValue}"/>
+                        <TextBlock Text="Downtime Today" Style="{StaticResource KpiLabel}"/>
+                    </StackPanel>
+                </Border>
+            </WrapPanel>
+
+            <!-- Charts -->
+            <UniformGrid Columns="2" Rows="2">
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Top Problem Machines" Style="{StaticResource ChartTitle}"/>
+                        <lvc:CartesianChart Series="{Binding TopMachinesSeries}" XAxes="{Binding TopMachinesXAxes}"
+                                             Height="240"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Breakdowns by Category" Style="{StaticResource ChartTitle}"/>
+                        <lvc:PieChart Series="{Binding CategorySeries}" Height="240" LegendPosition="Right"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Open Tickets by Stage" Style="{StaticResource ChartTitle}"/>
+                        <lvc:CartesianChart Series="{Binding StatusSeries}" XAxes="{Binding StatusXAxes}"
+                                             Height="240"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ChartCard}">
+                    <StackPanel>
+                        <TextBlock Text="Daily Volume (last 14 days)" Style="{StaticResource ChartTitle}"/>
+                        <lvc:CartesianChart Series="{Binding TrendSeries}" XAxes="{Binding TrendXAxes}"
+                                             Height="240"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -8,14 +8,15 @@ namespace BreakdownManager.App.ViewModels;
 
 /// <summary>
 /// Top-level shell. Starts on the login screen; once <see cref="ICurrentUserContext"/> is
-/// populated it switches to the Supervisor and/or Technician screens, restricted by the
-/// logged-in user's role, with a logout that drops back to login.
+/// populated it switches to the Supervisor, Technician, and/or Manager screens, restricted by
+/// the logged-in user's role, with a logout that drops back to login.
 /// </summary>
 public partial class MainViewModel : ObservableObject
 {
     private readonly LoginViewModel _loginViewModel;
     private readonly ReportBreakdownViewModel _reportBreakdownViewModel;
     private readonly TechnicianDashboardViewModel _technicianDashboardViewModel;
+    private readonly ManagerDashboardViewModel _managerDashboardViewModel;
     private readonly ICurrentUserContext _currentUserContext;
 
     [ObservableProperty]
@@ -36,15 +37,20 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool canShowTechnicianTab;
 
+    [ObservableProperty]
+    private bool canShowManagerTab;
+
     public MainViewModel(
         LoginViewModel loginViewModel,
         ReportBreakdownViewModel reportBreakdownViewModel,
         TechnicianDashboardViewModel technicianDashboardViewModel,
+        ManagerDashboardViewModel managerDashboardViewModel,
         ICurrentUserContext currentUserContext)
     {
         _loginViewModel = loginViewModel;
         _reportBreakdownViewModel = reportBreakdownViewModel;
         _technicianDashboardViewModel = technicianDashboardViewModel;
+        _managerDashboardViewModel = managerDashboardViewModel;
         _currentUserContext = currentUserContext;
 
         _loginViewModel.LoginSucceeded += OnLoginSucceeded;
@@ -58,6 +64,7 @@ public partial class MainViewModel : ObservableObject
         LoggedInUserDisplay = null;
         CanShowSupervisorTab = false;
         CanShowTechnicianTab = false;
+        CanShowManagerTab = false;
         ActiveTab = string.Empty;
         _loginViewModel.Reset();
         CurrentView = _loginViewModel;
@@ -68,12 +75,15 @@ public partial class MainViewModel : ObservableObject
         IsLoggedIn = true;
         LoggedInUserDisplay = $"{user.FullName} ({FormatRole(user.Role)})";
 
-        // Supervisors report faults, technicians work them; managers and admins can see both
-        // screens rather than being locked out of either one.
+        // Supervisors report faults, technicians work them, managers (and admins) watch the KPIs
+        // and can see both operational screens too rather than being locked out of either one.
         CanShowSupervisorTab = user.Role is UserRole.Supervisor or UserRole.MaintenanceManager or UserRole.Admin;
         CanShowTechnicianTab = user.Role is UserRole.Technician or UserRole.MaintenanceManager or UserRole.Admin;
+        CanShowManagerTab = user.Role is UserRole.MaintenanceManager or UserRole.Admin;
 
-        if (CanShowSupervisorTab)
+        if (CanShowManagerTab)
+            _ = ShowManagerViewAsync();
+        else if (CanShowSupervisorTab)
             _ = ShowSupervisorViewAsync();
         else
             _ = ShowTechnicianViewAsync();
@@ -99,6 +109,14 @@ public partial class MainViewModel : ObservableObject
         ActiveTab = "Technician";
         CurrentView = _technicianDashboardViewModel;
         await _technicianDashboardViewModel.InitializeAsync();
+    }
+
+    [RelayCommand]
+    private async Task ShowManagerViewAsync()
+    {
+        ActiveTab = "Manager";
+        CurrentView = _managerDashboardViewModel;
+        await _managerDashboardViewModel.InitializeAsync();
     }
 
     [RelayCommand]
