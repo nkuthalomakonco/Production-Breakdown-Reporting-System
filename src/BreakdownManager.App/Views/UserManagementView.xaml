@@ -1,0 +1,65 @@
+<UserControl x:Class="BreakdownManager.App.Views.UserManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="1100" d:DesignHeight="720">
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="360"/>
+            <ColumnDefinition Width="24"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Add user form -->
+        <Border Grid.Column="0" Background="White" BorderBrush="#E3E5E8" BorderThickness="1"
+                CornerRadius="6" Padding="20" VerticalAlignment="Top">
+            <StackPanel>
+                <TextBlock Text="Add New User" Style="{StaticResource SectionHeader}"/>
+
+                <TextBlock Text="Full name" FontWeight="SemiBold" Margin="0,8,0,4"/>
+                <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" Padding="8"/>
+
+                <TextBlock Text="Username" FontWeight="SemiBold" Margin="0,12,0,4"/>
+                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Padding="8"/>
+
+                <TextBlock Text="Role" FontWeight="SemiBold" Margin="0,12,0,4"/>
+                <ComboBox ItemsSource="{Binding AvailableRoles}" SelectedItem="{Binding SelectedRole}" Padding="8"/>
+
+                <TextBlock Text="Password" FontWeight="SemiBold" Margin="0,12,0,4"/>
+                <PasswordBox x:Name="PasswordInput" Padding="8" PasswordChanged="PasswordInput_PasswordChanged"/>
+                <TextBlock Text="{Binding PasswordRequirementText}" FontSize="11" Foreground="Gray" Margin="0,4,0,0"/>
+
+                <TextBlock Text="Confirm password" FontWeight="SemiBold" Margin="0,12,0,4"/>
+                <PasswordBox x:Name="ConfirmPasswordInput" Padding="8" PasswordChanged="ConfirmPasswordInput_PasswordChanged"/>
+
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource CriticalBrush}"
+                           TextWrapping="Wrap" Margin="0,12,0,0"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource NullOrEmptyToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding SuccessMessage}" Foreground="{StaticResource PrimaryBrush}" FontWeight="SemiBold"
+                           TextWrapping="Wrap" Margin="0,12,0,0"
+                           Visibility="{Binding SuccessMessage, Converter={StaticResource NullOrEmptyToVisibilityConverter}}"/>
+
+                <Button Content="ADD USER" Command="{Binding AddUserCommand}"
+                        Background="{StaticResource AccentBrush}" Padding="16,12" Margin="0,16,0,0"
+                        HorizontalAlignment="Stretch"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Existing users -->
+        <DockPanel Grid.Column="2">
+            <TextBlock Text="Users" Style="{StaticResource SectionHeader}" DockPanel.Dock="Top" Margin="0,0,0,12"/>
+            <DataGrid ItemsSource="{Binding Users}" AutoGenerateColumns="False" IsReadOnly="True"
+                      HeadersVisibility="Column" GridLinesVisibility="Horizontal" Background="White"
+                      BorderBrush="#E3E5E8" CanUserAddRows="False" RowHeight="34">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Full name" Binding="{Binding FullName}" Width="*"/>
+                    <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*"/>
+                    <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="150"/>
+                    <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive, Mode=OneWay}" Width="70"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </Grid>
+</UserControl>

@@ -17,6 +17,7 @@ public partial class MainViewModel : ObservableObject
     private readonly ReportBreakdownViewModel _reportBreakdownViewModel;
     private readonly TechnicianDashboardViewModel _technicianDashboardViewModel;
     private readonly ManagerDashboardViewModel _managerDashboardViewModel;
+    private readonly UserManagementViewModel _userManagementViewModel;
     private readonly ICurrentUserContext _currentUserContext;
 
     [ObservableProperty]
@@ -40,17 +41,22 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool canShowManagerTab;
 
+    [ObservableProperty]
+    private bool canShowUsersTab;
+
     public MainViewModel(
         LoginViewModel loginViewModel,
         ReportBreakdownViewModel reportBreakdownViewModel,
         TechnicianDashboardViewModel technicianDashboardViewModel,
         ManagerDashboardViewModel managerDashboardViewModel,
+        UserManagementViewModel userManagementViewModel,
         ICurrentUserContext currentUserContext)
     {
         _loginViewModel = loginViewModel;
         _reportBreakdownViewModel = reportBreakdownViewModel;
         _technicianDashboardViewModel = technicianDashboardViewModel;
         _managerDashboardViewModel = managerDashboardViewModel;
+        _userManagementViewModel = userManagementViewModel;
         _currentUserContext = currentUserContext;
 
         _loginViewModel.LoginSucceeded += OnLoginSucceeded;
@@ -65,6 +71,7 @@ public partial class MainViewModel : ObservableObject
         CanShowSupervisorTab = false;
         CanShowTechnicianTab = false;
         CanShowManagerTab = false;
+        CanShowUsersTab = false;
         ActiveTab = string.Empty;
         _loginViewModel.Reset();
         CurrentView = _loginViewModel;
@@ -80,6 +87,7 @@ public partial class MainViewModel : ObservableObject
         CanShowSupervisorTab = user.Role is UserRole.Supervisor or UserRole.MaintenanceManager or UserRole.Admin;
         CanShowTechnicianTab = user.Role is UserRole.Technician or UserRole.MaintenanceManager or UserRole.Admin;
         CanShowManagerTab = user.Role is UserRole.MaintenanceManager or UserRole.Admin;
+        CanShowUsersTab = user.Role is UserRole.MaintenanceManager or UserRole.Admin; // adding users
 
         if (CanShowManagerTab)
             _ = ShowManagerViewAsync();
@@ -117,6 +125,14 @@ public partial class MainViewModel : ObservableObject
         ActiveTab = "Manager";
         CurrentView = _managerDashboardViewModel;
         await _managerDashboardViewModel.InitializeAsync();
+    }
+
+    [RelayCommand]
+    private async Task ShowUsersViewAsync()
+    {
+        ActiveTab = "Users";
+        CurrentView = _userManagementViewModel;
+        await _userManagementViewModel.InitializeAsync();
     }
 
     [RelayCommand]

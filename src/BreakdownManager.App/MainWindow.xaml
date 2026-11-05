@@ -19,6 +19,9 @@
         <DataTemplate DataType="{x:Type vm:ManagerDashboardViewModel}">
             <views:ManagerDashboardView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:UserManagementViewModel}">
+            <views:UserManagementView/>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -51,10 +54,14 @@
                                  Visibility="{Binding CanShowTechnicianTab, Converter={StaticResource BoolToVisibilityConverter}}"
                                  IsChecked="{Binding ActiveTab, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Technician, Mode=OneWay}"
                                  Command="{Binding ShowTechnicianViewCommand}" Style="{StaticResource NavRadioButton}"/>
-                    <RadioButton Content="Manager" GroupName="Nav" Foreground="White"
+                    <RadioButton Content="Manager" GroupName="Nav" Foreground="White" Margin="0,0,20,0"
                                  Visibility="{Binding CanShowManagerTab, Converter={StaticResource BoolToVisibilityConverter}}"
                                  IsChecked="{Binding ActiveTab, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Manager, Mode=OneWay}"
                                  Command="{Binding ShowManagerViewCommand}" Style="{StaticResource NavRadioButton}"/>
+                    <RadioButton Content="Users" GroupName="Nav" Foreground="White"
+                                 Visibility="{Binding CanShowUsersTab, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsChecked="{Binding ActiveTab, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Users, Mode=OneWay}"
+                                 Command="{Binding ShowUsersViewCommand}" Style="{StaticResource NavRadioButton}"/>
                 </StackPanel>
             </DockPanel>
         </Border>

@@ -22,6 +22,14 @@ Technician dashboard) already wired together end-to-end.
 > plaintext. The Supervisor/Technician tabs in the top nav are now shown or hidden based on the
 > logged-in user's role, and there's a Log out button.
 >
+> **User management is now implemented.** Maintenance Managers (and Admins) get a **Users** tab
+> where they can see every account and add new ones (full name, username, role, password with
+> confirmation). The rule is enforced in `UserService`, not just hidden in the UI: anyone else
+> gets an `UnauthorizedAccessException`. Managers can create Supervisors, Technicians and other
+> Managers but not Admins (so "add users" can't be used to escalate to full control); usernames
+> must be unique (case-insensitively), can't contain spaces, and passwords need 8+ characters and
+> are hashed with `PasswordHasher` like the seeded ones.
+>
 > **Manager dashboard & charts are now implemented.** `DashboardStats` was extended with a
 > category breakdown, a per-stage breakdown, and a 14-day daily trend, all computed inside the
 > same `GetDashboardStatsAsync()` call rather than adding new queries. A new Manager tab (visible
@@ -109,13 +117,16 @@ or `Data` knows the app is a desktop app — that matters later if you build the
   completed), and downtime — plus a `DashboardStats` aggregate (open/in-progress/waiting-parts
   counts, average response time and MTTR, top problem machines, category and per-stage
   breakdowns, and a 14-day daily trend).
+- **User management**: Maintenance Managers and Admins can list all accounts and add new users
+  from a Users tab; permissions and validation are enforced in `UserService`.
 - **Manager dashboard**: KPI tiles plus four LiveCharts2 charts (top problem machines, breakdowns
   by category, open tickets by stage, daily volume), with a Refresh button. Visible to
   Maintenance Managers and Admins only.
 - **Ticket numbering**: `BD-2026-0001` style, auto-incrementing per year.
 - **Tests**: ticket creation, technician assignment, repair completion, dashboard chart data
-  (category/status/daily-trend breakdowns), password hashing, and login (correct password, wrong
-  password, unknown username, deactivated account), all run
+  (category/status/daily-trend breakdowns), password hashing, login (correct password, wrong
+  password, unknown username, deactivated account), and user creation (who may add users, role
+  limits, duplicate/invalid input), all run
   against a real (in-memory) SQLite connection where relevant so the actual SQL translation is
   exercised, not just an in-memory fake.
 
