@@ -21,7 +21,8 @@ public static class DbSeeder
                 new User { FullName = "John Mokoena", Username = "john.m", Role = UserRole.Technician, PasswordHash = PasswordHasher.Hash("john") },
 				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.tech", Role = UserRole.Technician, PasswordHash = PasswordHasher.Hash("nkuthalo") },
 				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.sup", Role = UserRole.Supervisor, PasswordHash = PasswordHasher.Hash("nkuthalo") },
-				new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.mgr", Role = UserRole.MaintenanceManager, PasswordHash = PasswordHasher.Hash("nkuthalo") }
+                new User { FullName = "Nkuthalo Makonco", Username = "admin", Role = UserRole.Supervisor, PasswordHash = PasswordHasher.Hash("admin") },
+                new User { FullName = "Nkuthalo Makonco", Username = "nkuthalo.mgr", Role = UserRole.MaintenanceManager, PasswordHash = PasswordHasher.Hash("nkuthalo") }
             );
         }
 

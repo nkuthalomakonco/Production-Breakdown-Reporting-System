@@ -136,12 +136,8 @@ These are straightforward to layer on top of the current structure, in roughly t
 
 1. **PDF/Excel reports** (QuestPDF / ClosedXML) — the dashboard's `DashboardStats` is the natural
    data source.
-2. **Notifications** (Windows toast when a job is accepted / when a machine's been down >30 min).
-3. **Root cause tooling** (5 Whys / Fishbone) beyond the current free-text `RootCause` field.
-4. **Spare parts consumption UI** — the `BreakdownSparePart` join entity and stock tracking on
-   `SparePart` already exist in the data model; there's no screen for it yet.
-5. Longer term: QR codes per machine, PLC alarm integration, and the ASP.NET Core API + Blazor
-   PWA path discussed for v2/v3 so supervisors and technicians can use it from tablets/phones.
+2. **ASP.NET Core API + Blazor** — a web version so supervisors and technicians can use the
+   system from tablets and phones; the Domain and Services layers are written to be reused as-is.
 
 ## License
 
